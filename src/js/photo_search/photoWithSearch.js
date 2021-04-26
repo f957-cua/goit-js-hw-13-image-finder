@@ -57,7 +57,10 @@ class Photos {
         const observerHandler = debounce(entries => {
             if (entries[0].isIntersecting) {
                 this.page += 1;
-                this.scrollHeight = document.body.clientHeight;
+                if (this.page >= 2) {
+                    this.scrollHeight = document.body.clientHeight;                    
+                }
+
                 this.fetchPhotos(this.page, this.searchQuery);
 
             }
@@ -96,6 +99,13 @@ class Photos {
 
     async fetchPhotos(page, query) {
         try {
+            console.log(query);
+            if (query === " " || query == "") {
+            alert({
+                text: 'select images by name'
+            })                
+                return;
+            }
             const { hits } = await photoService.fetchPhoto(page, query);
             this.galleryView = [...this.galleryView, ...hits]
             this.renderPhotos(hits);
@@ -127,7 +137,9 @@ gallery.element.addEventListener('click', (e) => {
     const accurateClick = e.target.classList.contains('img-card');
 
     if (!accurateClick) {
-        console.log('false');
+            alert({
+                text: 'Sorry, error by fetch from API'
+            })
         return;
     }
     const currentImg = e.target.attributes.src.nodeValue;
